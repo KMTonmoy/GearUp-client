@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface Product {
     _id: string;
@@ -20,6 +21,7 @@ const Shop: React.FC = () => {
         category: '',
         priceRange: [0, 2000],
     });
+    const [visibleProducts, setVisibleProducts] = useState(9);
 
     useEffect(() => {
         fetch('http://localhost:5000/api/products')
@@ -49,10 +51,11 @@ const Shop: React.FC = () => {
         );
     });
 
+    const handleShowMore = () => setVisibleProducts(visibleProducts + 9);
+    const handleShowLess = () => setVisibleProducts(9);
+
     return (
         <div className="container mx-auto py-10">
-            <h2 className="text-4xl font-bold text-center mb-8 text-indigo-600">Shop Our Bicycles</h2>
-
             <div className="flex justify-between items-center mb-8">
                 <input
                     type="text"
@@ -61,7 +64,6 @@ const Shop: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-
                 <div className="flex items-center gap-6">
                     <div className="flex flex-col items-start">
                         <label className="text-lg font-medium">Price Range</label>
@@ -125,22 +127,55 @@ const Shop: React.FC = () => {
                 <div className="text-center text-xl font-semibold text-gray-600">Loading...</div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredProducts.map((data) => (
-                        <div key={data._id} className="bicycle-card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                            <img className="w-full h-48 object-cover rounded-md mb-6" src={data.image} alt={data.name} />
+                    {filteredProducts.slice(0, visibleProducts).map((data) => (
+                        <motion.div
+                            key={data._id}
+                            className="bicycle-card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <img
+                                className="w-full h-48 object-contain rounded-md mb-6"
+                                src={data.image}
+                                alt={data.name}
+                            />
+
                             <h3 className="text-2xl font-semibold mb-2 text-gray-800">{data.name}</h3>
                             <p className="text-gray-600 mb-2"><strong>Brand:</strong> {data.brand}</p>
                             <p className="text-gray-600 mb-2"><strong>Model:</strong> {data.model}</p>
                             <p className="font-semibold text-lg text-gray-800 mb-2"><strong>Price:</strong> ${data.price}</p>
                             <p className="text-gray-600 mb-4"><strong>Category:</strong> {data.type}</p>
                             <Link
-                                to={`/bicycle/${data._id}`}
+                                to={`/shop/${data._id}`}
                                 className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition-colors"
                             >
                                 View Details
                             </Link>
-                        </div>
+                        </motion.div>
                     ))}
+                </div>
+            )}
+
+            {filteredProducts.length > visibleProducts && (
+                <div className="text-center mt-6">
+                    <button
+                        onClick={handleShowMore}
+                        className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition-colors"
+                    >
+                        Show More
+                    </button>
+                </div>
+            )}
+
+            {filteredProducts.length <= visibleProducts && visibleProducts > 9 && (
+                <div className="text-center mt-6">
+                    <button
+                        onClick={handleShowLess}
+                        className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition-colors"
+                    >
+                        Show Less
+                    </button>
                 </div>
             )}
         </div>

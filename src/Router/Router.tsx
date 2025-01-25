@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Main from "../Layout/Main";
 import Home from "../Pages/Home";
 import Shop from "../Pages/shop";
+import ShopDetails from "../Pages/ShopDetails";
 
 
 
@@ -18,7 +19,14 @@ export const router = createBrowserRouter([
                 path: "/shop",
                 element: <Shop />,
             },
- 
+            {
+                path: "/shop/:id",
+                element: <ShopDetails />,
+                loader: ({ params }) => fetch(`http://localhost:5000/api/products/${params.id}`),
+
+
+            },
+
         ]
     },
     {

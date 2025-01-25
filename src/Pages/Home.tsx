@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from "react-helmet";
 import Banner from '../Components/Banner/Banner';
 import InfoCards from '../Components/InfoCards/InfoCards';
 import FeaturedBicycles from '../Components/FeaturedBicycles/FeaturedBicycles';
@@ -8,6 +9,9 @@ import Faq from '../Components/Faq/Faq';
 const Home = () => {
     return (
         <>
+          <Helmet>
+                 <title>GearUp-Home</title>
+             </Helmet>
             <div className='mb-10'>
                 <Banner />
             </div>
