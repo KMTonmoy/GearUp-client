@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 
 interface Product {
     _id: string;
@@ -65,9 +66,12 @@ const Shop: React.FC = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="flex items-center gap-6">
+                    <Helmet>
+                        <title>GearUp - Shop</title>
+                    </Helmet>
                     <div className="flex flex-col items-start">
                         <label className="text-lg font-medium">Price Range</label>
-                        <div className="flex gap-4 items-center">
+                        {/* <div className="flex gap-4 items-center">
                             <input
                                 type="range"
                                 min="0"
@@ -88,7 +92,33 @@ const Shop: React.FC = () => {
                                 }))}
                                 className="w-full h-2 bg-orange-400 rounded-full"
                             />
+                        </div> */}
+
+
+                        <div className="flex gap-4 items-center">
+                            <input
+                                type="range"
+                                min="0"
+                                max="2000"
+                                value={filters.priceRange[0]}
+                                onChange={(e) => setFilters((prev) => ({
+                                    ...prev, priceRange: [Number(e.target.value), filters.priceRange[1]],
+                                }))}
+                                className="w-full h-2 bg-orange-400 rounded-full"
+                            />
+                            <input
+                                type="range"
+                                min="0"
+                                max="2000"
+                                value={filters.priceRange[1]}
+                                onChange={(e) => setFilters((prev) => ({
+                                    ...prev, priceRange: [filters.priceRange[0], Number(e.target.value)],
+                                }))}
+                                className="w-full h-2 bg-orange-400 rounded-full"
+                            />
                         </div>
+
+
                     </div>
 
                     <div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { useLoaderData } from "react-router-dom";
 
 const ShopDetails = () => {
@@ -6,7 +7,7 @@ const ShopDetails = () => {
     const product = loadProduct?.data;
     const [selectedQuantity, setSelectedQuantity] = useState(1);
 
-    const handleQuantityChange = (e) => {
+    const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Number(e.target.value);
         if (value > 0 && value <= product.quantity) {
             setSelectedQuantity(value);
@@ -14,7 +15,10 @@ const ShopDetails = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl my-20 mx-auto">
+             <Helmet>
+                 <title>GearUp - {product.name}</title>
+             </Helmet>
             {product ? (
                 <div className="flex flex-col md:flex-row gap-10 p-6 rounded-lg bg-white shadow-md">
                     <img

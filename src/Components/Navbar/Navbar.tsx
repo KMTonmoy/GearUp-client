@@ -15,7 +15,7 @@ const Navbar = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const isActive = (path) => location.pathname === path ? 'text-orange-600' : '';
+    const isActive = (path: string) => location.pathname === path ? 'text-orange-600' : '';
 
     return (
         <div className='bg-black sticky top-0 w-full z-50'>
