@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LuShoppingBag } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import { motion } from 'framer-motion';
+import useUserRole from '../../hook/useUserRole';
 
 const Navbar = () => {
+    const role = useUserRole();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
     const isActive = (path: string) => location.pathname === path ? 'text-orange-600' : '';
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
 
     return (
         <div className='bg-black sticky top-0 w-full z-50'>
@@ -51,6 +59,14 @@ const Navbar = () => {
                         <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
                             <LuShoppingBag />
                         </Link>
+                        {role && (
+                            <button
+                                className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300'
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        )}
                         <button className='md:hidden text-[27px] hover:text-orange-600 transition-colors duration-300' onClick={toggleMenu}>
                             <HiOutlineMenuAlt3 />
                         </button>
@@ -73,7 +89,6 @@ const Navbar = () => {
                     </div>
                     <div className='flex flex-col gap-6 px-4 py-6'>
                         <Link
-
                             to={`/`}
                             className={`text-[17px] font-[600] relative group transition-all duration-300 ${isActive('/')}`}
                             onClick={toggleMenu}
