@@ -2,7 +2,9 @@ import React from 'react';
 import Banner from '../Components/Banner/Banner';
 import InfoCards from '../Components/InfoCards/InfoCards';
 import FeaturedBicycles from '../Components/FeaturedBicycles/FeaturedBicycles';
-
+import Testimonials from '../Components/Testimonials/Testimonials';
+import Faq from '../Components/Faq/Faq';
+  
 const Home = () => {
     return (
         <>
@@ -12,6 +14,8 @@ const Home = () => {
             <div className=' md:px-0 px-5 max-w-7xl min-h-[100vh] mx-auto flex flex-col gap-10 '>
                 <InfoCards />
                 <FeaturedBicycles />
+                <Testimonials />
+                <Faq />
             </div>
         </>
     );
