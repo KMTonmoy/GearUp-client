@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const Banner = () => {
-    // Data for slides
     const slides = [
         {
             img: "https://bikun-store-demo.myshopify.com/cdn/shop/files/slideshowV1-bg1.jpg?v=1664612758",
@@ -16,33 +15,27 @@ const Banner = () => {
         },
     ];
 
-    // State to track the current slide
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    // Function to handle previous slide
     const prevSlide = () => {
         setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
     };
 
-    // Function to handle next slide
     const nextSlide = () => {
         setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     };
 
     return (
-        <div className="relative w-full h-[700px] overflow-hidden">
-            {/* Carousel Images */}
+        <div className="relative w-full h-[60vh] sm:h-[700px] overflow-hidden">
             {slides.map((slide, index) => (
                 <div
                     key={index}
-                    className={`absolute top-0 left-0 w-full h-full bg-cover bg-center transition-transform duration-700 ${currentSlide === index ? 'translate-x-0' : 'translate-x-full'} ${currentSlide === index - 1 || (index === 0 && currentSlide === slides.length - 1) ? '-translate-x-full' : ''
-                        }`}
+                    className={`absolute top-0 left-0 w-full h-full bg-cover bg-center transition-transform duration-700 ${currentSlide === index ? 'translate-x-0' : 'translate-x-full'} ${currentSlide === index - 1 || (index === 0 && currentSlide === slides.length - 1) ? '-translate-x-full' : ''}`}
                     style={{ backgroundImage: `url(${slide.img})` }}
                 >
-                    {/* Text Content */}
-                    <div className="absolute left-50 top-70 transform -translate-y-1/2 text-white max-w-lg">
-                        <h4 className="text-lg font-semibold mb-3">{slide.title}</h4>
-                        <h1 className="text-5xl font-bold mb-5">{slide.subtitle}</h1>
+                    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center sm:left-1/4 sm:top-1/4 sm:text-left sm:max-w-lg">
+                        <h4 className="text-xl sm:text-2xl font-semibold mb-3">{slide.title}</h4>
+                        <h1 className="text-3xl sm:text-5xl font-bold mb-5">{slide.subtitle}</h1>
                         <button className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition-colors">
                             Shop Now
                         </button>
@@ -50,7 +43,6 @@ const Banner = () => {
                 </div>
             ))}
 
-            {/* Controller Buttons */}
             <button
                 onClick={prevSlide}
                 className="absolute left-5 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black text-white p-3 rounded-full transition-all z-10"
@@ -64,14 +56,12 @@ const Banner = () => {
                 <FaChevronRight size={20} />
             </button>
 
-            {/* Dots Indicator */}
             <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-2">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrentSlide(index)}
-                        className={`w-3 h-3 rounded-full ${currentSlide === index ? 'bg-orange-500' : 'bg-gray-300'
-                            } transition-all`}
+                        className={`w-3 h-3 rounded-full ${currentSlide === index ? 'bg-orange-500' : 'bg-gray-300'} transition-all`}
                     ></button>
                 ))}
             </div>

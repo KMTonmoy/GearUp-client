@@ -8,7 +8,7 @@ const Home = () => {
             <div className='mb-10'>
                 <Banner />
             </div>
-            <div className='max-w-7xl min-h-[100vh] mx-auto flex flex-col gap-10 '>
+            <div className=' md:px-0 px-5 max-w-7xl min-h-[100vh] mx-auto flex flex-col gap-10 '>
                 <InfoCards />
             </div>
         </>
