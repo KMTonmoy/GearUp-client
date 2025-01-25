@@ -23,26 +23,35 @@ const Navbar = () => {
 
                     {/* Links for larger screens */}
                     <div className='hidden md:flex gap-5'>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600 hover:underline' to='/'>Home</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600 hover:underline' to='/shop'>Shop</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600 hover:underline' to='/blogs'>Blogs</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600 hover:underline' to='/contact'>Contact Us</Link>
+                        {['Home', 'Shop', 'Blogs', 'Contact Us'].map((item, index) => (
+                            <Link
+                                key={index}
+                                className='text-[17px] font-[600] relative group transition-all duration-300'
+                                to={`/${item.replace(/\s+/g, '').toLowerCase()}`}
+                            >
+                                <span className='hover:text-orange-600'>
+                                    {item}
+                                </span>
+                                <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                        ))}
                     </div>
 
                     {/* Icons */}
                     <div className='flex gap-5 items-center'>
-                        <Link className='text-[27px] font-[600] hover:text-orange-600' to='/search'>
+                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300'
+                         to='/shop'>
                             <IoSearchOutline />
                         </Link>
-                        <Link className='text-[27px] font-[600] hover:text-orange-600' to='/profile'>
+                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/login'>
                             <FaRegUser />
                         </Link>
-                        <Link className='text-[27px] font-[600] hover:text-orange-600' to='/cart'>
+                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
                             <LuShoppingBag />
                         </Link>
 
                         {/* Hamburger menu for smaller screens */}
-                        <button className='md:hidden text-[27px] hover:text-orange-600' onClick={toggleMenu}>
+                        <button className='md:hidden text-[27px] hover:text-orange-600 transition-colors duration-300' onClick={toggleMenu}>
                             <HiOutlineMenuAlt3 />
                         </button>
                     </div>
@@ -60,17 +69,32 @@ const Navbar = () => {
                 >
                     <div className='flex justify-between items-center px-4 py-4 border-b border-gray-700'>
                         <h1 className='font-[800] text-[26px]'>GearUp</h1>
-                        <button onClick={toggleMenu} className='text-[27px] hover:text-orange-600'>
+                        <button onClick={toggleMenu} className='text-[27px] hover:text-orange-600 transition-colors duration-300'>
                             <IoClose />
                         </button>
                     </div>
                     <div className='flex flex-col gap-6 px-4 py-6'>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600' to='/' onClick={toggleMenu}>Home</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600' to='/shop' onClick={toggleMenu}>Shop</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600' to='/blogs' onClick={toggleMenu}>Blogs</Link>
-                        <Link className='text-[17px] font-[600] hover:text-orange-600' to='/contact' onClick={toggleMenu}>Contact Us</Link>
-                        <Link className='flex items-center text-[17px] font-[600] hover:text-orange-600' to='/profile' onClick={toggleMenu}>
-                            <FaRegUser className='mr-2' /> Login
+                        {['Home', 'Shop', 'Blogs', 'Contact Us'].map((item, index) => (
+                            <Link
+                                key={index}
+                                className='text-[17px] font-[600] relative group transition-all duration-300'
+                                to={`/${item.replace(/\s+/g, '').toLowerCase()}`}
+                                onClick={toggleMenu}
+                            >
+                                <span className='hover:text-orange-600'>
+                                    {item}
+                                </span>
+                                <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                        ))}
+                        <Link
+                            className='flex items-center text-[17px] font-[600] relative group transition-all duration-300'
+                            to='/profile'
+                            onClick={toggleMenu}
+                        >
+                            <FaRegUser className='mr-2' />
+                            Login
+                            <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                         </Link>
                     </div>
                 </motion.div>
