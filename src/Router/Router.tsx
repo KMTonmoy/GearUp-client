@@ -8,6 +8,8 @@ import Signup from "../Pages/Signup";
 import Cart from "../Pages/Cart";
 import About from "../Pages/About";
 import ContactUs from "../Pages/contactus";
+import DashboardLayout from "../Layout/DashboardLayout";
+import DashboardHome from "../Pages/DashboardHome";
 
 
 
@@ -51,6 +53,18 @@ export const router = createBrowserRouter([
 
 
             },
+
+        ]
+    },
+    {
+        path: "/dashboard",
+        element: <DashboardLayout />,
+        children: [
+            {
+                path: "/dashboard",
+                element: <DashboardHome />,
+            },
+
 
         ]
     },

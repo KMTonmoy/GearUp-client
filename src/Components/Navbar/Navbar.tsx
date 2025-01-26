@@ -68,6 +68,17 @@ const Navbar = () => {
                                 <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
+
+
+                        <Link
+                            to={`/dashboard`}
+                            className={`text-[17px] font-[600] relative group transition-all duration-300 ${isActive('/dashboard')}`}
+                        >
+                            Dashboard
+                            <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                        </Link>
+
+
                     </div>
                     <div className='flex gap-5 items-center'>
                         <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/shop'>
