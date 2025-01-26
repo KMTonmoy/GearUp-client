@@ -58,7 +58,7 @@ const Navbar = () => {
                             Home
                             <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                         </Link>
-                        {['Shop', 'Blogs', 'Contact Us'].map((item, index) => (
+                        {['Shop', 'Blogs', 'Contact Us', 'About'].map((item, index) => (
                             <Link
                                 key={index}
                                 to={`/${item.replace(/\s+/g, '').toLowerCase()}`}
@@ -73,6 +73,10 @@ const Navbar = () => {
                         <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/shop'>
                             <IoSearchOutline />
                         </Link>
+
+                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
+                            <LuShoppingBag />
+                        </Link>
                         {!role ? (
                             <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/login'>
                                 <FaRegUser />
@@ -85,9 +89,7 @@ const Navbar = () => {
                                 Logout
                             </button>
                         )}
-                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
-                            <LuShoppingBag />
-                        </Link>
+
                         <button className='md:hidden text-[27px] hover:text-orange-600 transition-colors duration-300' onClick={toggleMenu}>
                             <HiOutlineMenuAlt3 />
                         </button>
