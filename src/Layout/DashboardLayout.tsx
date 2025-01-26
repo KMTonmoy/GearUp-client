@@ -10,7 +10,7 @@ const DashboardLayout = () => {
                 <div className='md:w-[220px]'>
                     <Sidebar />
                 </div>
-                <main className="flex justify-center w-[100%] ml-20"><Outlet /></main>
+                <main className="flex justify-center w-[100%] md:ml-20"><Outlet /></main>
             </div>
 
         </>

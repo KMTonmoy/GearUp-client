@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaTachometerAlt, FaUsers, FaProductHunt, FaShoppingCart, FaUserCog, FaBoxOpen } from 'react-icons/fa';
+import { FaTachometerAlt, FaUsers, FaProductHunt, FaShoppingCart, FaUserCog, FaBoxOpen, FaHome } from 'react-icons/fa';
 import useUserRole from '../../hook/useUserRole';
 
 const Sidebar = () => {
@@ -71,6 +71,13 @@ const Sidebar = () => {
 
                     {/* Sidebar Links */}
                     <nav className="space-y-4 px-4 py-6">
+
+                        <Link
+                            to="/"
+                            className="flex items-center py-2 px-4 hover:bg-gray-700 rounded transition duration-200"
+                        >
+                            <FaHome className="mr-3" /> Home
+                        </Link>
                         {/* Admin Links */}
                         {role === 'admin' && (
                             <>

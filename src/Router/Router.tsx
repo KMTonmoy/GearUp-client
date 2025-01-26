@@ -10,6 +10,8 @@ import About from "../Pages/About";
 import ContactUs from "../Pages/contactus";
 import DashboardLayout from "../Layout/DashboardLayout";
 import DashboardHome from "../Pages/DashboardHome";
+import ManageUsers from "../Pages/ManageUsers";
+import ManageProducts from "../Pages/ManageProducts";
 
 
 
@@ -63,6 +65,14 @@ export const router = createBrowserRouter([
             {
                 path: "/dashboard",
                 element: <DashboardHome />,
+            },
+            {
+                path: "/dashboard/users",
+                element: <ManageUsers />,
+            },
+            {
+                path: "/dashboard/products",
+                element: <ManageProducts />,
             },
 
 
