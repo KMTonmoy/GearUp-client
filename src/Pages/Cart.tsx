@@ -11,6 +11,7 @@ const stripePromise = loadStripe(
     'pk_test_51PLRDh1ER2eQQaKOIacKieEoEcmrxq1iXUsfZCu7itWd6KAMzuQyotjLWrjKag3KzgTsvZooEDBnfsfyVGMbznhJ00vAOF7I33'
 );
 
+
 interface Product {
     _id: string;
     name: string;
@@ -46,13 +47,17 @@ const Cart: React.FC = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
+ 
                 const paymentRes = await fetch(`http://localhost:5000/api/payments`);
-                const paymentData = await paymentRes.json();
+
+                console.log(paymentRes)
+
 
                 const cartResponse = await fetch(`http://localhost:5000/api/mycartall`);
+
                 const cartData: { data: CartItem[] } = await cartResponse.json();
                 const filteredCartItems = cartData.data.filter((item) => item.email === email);
-
+  
                 const productResponse = await fetch(`http://localhost:5000/api/products`);
                 const productData: { data: Product[] } = await productResponse.json();
 
@@ -70,15 +75,7 @@ const Cart: React.FC = () => {
                     return cartItem;
                 });
 
-                const purchasedProductIds = paymentData.map((payment: any) =>
-                    payment.orderedProducts.map((orderedProduct: any) => orderedProduct.productId)
-                ).flat();
-
-                const updatedCartItems = enrichedCartItems.filter(item =>
-                    !purchasedProductIds.includes(item.productId)
-                );
-
-                setCartItems(updatedCartItems);
+                setCartItems(enrichedCartItems);
             } catch (error) {
                 console.error('Error fetching cart data:', error);
             }
@@ -98,6 +95,8 @@ const Cart: React.FC = () => {
         checkStripeLoaded();
     }, []);
 
+
+ 
     const handleRemove = async (productId: string) => {
         const confirmed = await Swal.fire({
             title: 'Are you sure?',
