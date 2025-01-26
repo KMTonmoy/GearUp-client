@@ -6,12 +6,24 @@ import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 import { imageUpload } from '../api/utils';
 
+interface Product {
+    _id?: string;
+    name: string;
+    image: string;
+    brand: string;
+    model: string;
+    price: number;
+    type: string;
+    description: string;
+    quantity: number;
+}
+
 const ManageProducts = () => {
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [updateModalOpen, setUpdateModalOpen] = useState(false);
-    const [image, setImage] = useState(null);
-    const [newProduct, setNewProduct] = useState({
+    const [image, setImage] = useState<File | null>(null);
+    const [newProduct, setNewProduct] = useState<Product>({
         name: '',
         image: '',
         brand: '',
@@ -21,7 +33,7 @@ const ManageProducts = () => {
         description: '',
         quantity: 0,
     });
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -31,13 +43,13 @@ const ManageProducts = () => {
         fetchProducts();
     }, []);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setNewProduct((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files ? e.target.files[0] : null;
         if (file) {
             setImage(file);
         }
@@ -61,7 +73,7 @@ const ManageProducts = () => {
 
     const handleUpdateProduct = async () => {
         if (!selectedProduct) return;
-        
+
         let imageUrl = selectedProduct.image; // Keep the old image URL
 
         if (image) {
@@ -70,15 +82,15 @@ const ManageProducts = () => {
 
         const updatedProductData = { ...selectedProduct, image: imageUrl };
 
-        const response = await axios.put(`http://localhost:5000/api/products/${selectedProduct?._id}`, updatedProductData);
+        const response = await axios.put(`http://localhost:5000/api/products/${selectedProduct._id}`, updatedProductData);
         if (response.data.success) {
-            setProducts(products.map((prod) => (prod._id === selectedProduct?._id ? updatedProductData : prod)));
+            setProducts(products.map((prod) => (prod._id === selectedProduct._id ? updatedProductData : prod)));
             setUpdateModalOpen(false);
             toast.success('Product updated successfully!');
         }
     };
 
-    const handleDeleteProduct = async (id) => {
+    const handleDeleteProduct = async (id: string) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You will not be able to recover this product!',
@@ -101,16 +113,16 @@ const ManageProducts = () => {
     const handleAddProductClick = () => setModalOpen(true);
     const handleCloseModal = () => setModalOpen(false);
 
-    const handleEditProductClick = (product) => {
+    const handleEditProductClick = (product: Product) => {
         setSelectedProduct(product);
         setUpdateModalOpen(true);
     };
 
     const handleCloseUpdateModal = () => setUpdateModalOpen(false);
 
-    const handleUpdateInputChange = (e) => {
+    const handleUpdateInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setSelectedProduct((prev) => ({ ...prev, [name]: value }));
+        setSelectedProduct((prev) => (prev ? { ...prev, [name]: value } : prev));
     };
 
     return (
@@ -126,14 +138,14 @@ const ManageProducts = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                    <div key={product?._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-                        <img src={product?.image} alt={product?.name} className="w-full h-48 object-cover rounded-lg mb-4" />
-                        <h4 className="text-lg font-medium text-gray-800">{product?.name}</h4>
-                        <p className="text-sm text-gray-500">{product?.brand} - {product?.model}</p>
-                        <p className="text-sm text-gray-500">{product?.type}</p>
-                        <p className="text-sm text-gray-500">{product?.price} USD</p>
-                        <p className="text-sm text-gray-500">{product?.description}</p>
-                        <p className="text-sm text-gray-500">In stock: {product?.quantity}</p>
+                    <div key={product._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                        <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                        <h4 className="text-lg font-medium text-gray-800">{product.name}</h4>
+                        <p className="text-sm text-gray-500">{product.brand} - {product.model}</p>
+                        <p className="text-sm text-gray-500">{product.type}</p>
+                        <p className="text-sm text-gray-500">{product.price} USD</p>
+                        <p className="text-sm text-gray-500">{product.description}</p>
+                        <p className="text-sm text-gray-500">In stock: {product.quantity}</p>
 
                         <div className="flex space-x-2 mt-4">
                             <button
@@ -143,7 +155,7 @@ const ManageProducts = () => {
                                 Edit
                             </button>
                             <button
-                                onClick={() => handleDeleteProduct(product?._id)}
+                                onClick={() => handleDeleteProduct(product._id!)}
                                 className="text-red-600 hover:text-red-800 transition duration-200"
                             >
                                 Delete
@@ -162,7 +174,7 @@ const ManageProducts = () => {
                             type="text"
                             id="name"
                             name="name"
-                            value={newProduct?.name}
+                            value={newProduct.name}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -183,7 +195,7 @@ const ManageProducts = () => {
                             type="text"
                             id="brand"
                             name="brand"
-                            value={newProduct?.brand}
+                            value={newProduct.brand}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -194,7 +206,7 @@ const ManageProducts = () => {
                             type="text"
                             id="model"
                             name="model"
-                            value={newProduct?.model}
+                            value={newProduct.model}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -205,7 +217,7 @@ const ManageProducts = () => {
                             type="number"
                             id="price"
                             name="price"
-                            value={newProduct?.price}
+                            value={newProduct.price}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -216,7 +228,7 @@ const ManageProducts = () => {
                             type="number"
                             id="quantity"
                             name="quantity"
-                            value={newProduct?.quantity}
+                            value={newProduct.quantity}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -226,7 +238,7 @@ const ManageProducts = () => {
                         <select
                             id="type"
                             name="type"
-                            value={newProduct?.type}
+                            value={newProduct.type}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         >
@@ -242,7 +254,7 @@ const ManageProducts = () => {
                         <textarea
                             id="description"
                             name="description"
-                            value={newProduct?.description}
+                            value={newProduct.description}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -273,7 +285,7 @@ const ManageProducts = () => {
                             type="text"
                             id="name"
                             name="name"
-                            value={selectedProduct?.name}
+                            value={selectedProduct?.name || ''}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -293,7 +305,7 @@ const ManageProducts = () => {
                             type="text"
                             id="brand"
                             name="brand"
-                            value={selectedProduct?.brand}
+                            value={selectedProduct?.brand || ''}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -304,7 +316,7 @@ const ManageProducts = () => {
                             type="text"
                             id="model"
                             name="model"
-                            value={selectedProduct?.model}
+                            value={selectedProduct?.model || ''}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -315,7 +327,7 @@ const ManageProducts = () => {
                             type="number"
                             id="price"
                             name="price"
-                            value={selectedProduct?.price}
+                            value={selectedProduct?.price || 0}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -326,7 +338,7 @@ const ManageProducts = () => {
                             type="number"
                             id="quantity"
                             name="quantity"
-                            value={selectedProduct?.quantity}
+                            value={selectedProduct?.quantity || 0}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -336,7 +348,7 @@ const ManageProducts = () => {
                         <select
                             id="type"
                             name="type"
-                            value={selectedProduct?.type}
+                            value={selectedProduct?.type || ''}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         >
@@ -352,7 +364,7 @@ const ManageProducts = () => {
                         <textarea
                             id="description"
                             name="description"
-                            value={selectedProduct?.description}
+                            value={selectedProduct?.description || ''}
                             onChange={handleUpdateInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />

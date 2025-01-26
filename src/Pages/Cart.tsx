@@ -4,6 +4,13 @@ import { FaTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
+import CheckoutForm from '../Components/Payment/CheckoutForm';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe(
+    'pk_test_51PLRDh1ER2eQQaKOIacKieEoEcmrxq1iXUsfZCu7itWd6KAMzuQyotjLWrjKag3KzgTsvZooEDBnfsfyVGMbznhJ00vAOF7I33'
+);
+
 
 interface Product {
     _id: string;
@@ -24,8 +31,10 @@ interface CartItem {
     price?: number;
 }
 
-const Cart = () => {
+const Cart: React.FC = () => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [showCheckout, setShowCheckout] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const { email } = useUserRole();
 
     const totalCost = cartItems.reduce(
@@ -33,7 +42,6 @@ const Cart = () => {
         0
     );
     const deliveryCharge = cartItems.reduce((acc, item) => acc + item.quantity * 5, 0);
-
     const grandTotal = totalCost + deliveryCharge;
 
     useEffect(() => {
@@ -69,6 +77,17 @@ const Cart = () => {
         fetchCartData();
     }, [email]);
 
+    useEffect(() => {
+        const checkStripeLoaded = async () => {
+            const stripeLoaded = await stripePromise;
+            if (stripeLoaded) {
+                setLoading(false);
+            }
+        };
+
+        checkStripeLoaded();
+    }, []);
+
     const handleRemove = async (productId: string) => {
         const confirmed = await Swal.fire({
             title: 'Are you sure?',
@@ -81,18 +100,30 @@ const Cart = () => {
         });
 
         if (confirmed.isConfirmed) {
-            const response = await fetch(`http://localhost:5000/api/mycart/${productId}`, {
-                method: 'DELETE',
-            });
-            const data = await response.json();
+            try {
+                const response = await fetch(`http://localhost:5000/api/mycart/${productId}`, {
+                    method: 'DELETE',
+                });
+                const data = await response.json();
 
-            if (data.success) {
-                setCartItems(cartItems.filter((item) => item._id !== productId));
-                toast.success('Item removed from cart');
-            } else {
-                toast.error('Failed to remove item');
+                if (data.success) {
+                    setCartItems((prevItems) => prevItems.filter((item) => item._id !== productId));
+                    toast.success('Item removed from cart');
+                } else {
+                    toast.error('Failed to remove item');
+                }
+            } catch (error) {
+                toast.error('Error removing item');
             }
         }
+    };
+
+    const handlePlaceOrder = () => {
+        setShowCheckout(true);
+    };
+
+    const closeModal = () => {
+        setShowCheckout(false);
     };
 
     return (
@@ -149,11 +180,36 @@ const Cart = () => {
                         </div>
                     </div>
                     <div className="flex justify-end mt-8">
-                        <button className="bg-orange-600 text-white py-3 px-8 rounded-lg shadow-md hover:bg-orange-500 transition-all text-lg">
-                            Proceed to Checkout
+                        <button
+                            className="bg-orange-600 text-white py-3 px-8 rounded-lg shadow-md hover:bg-orange-500 transition-all text-lg"
+                            onClick={handlePlaceOrder}
+                        >
+                            Place Order
                         </button>
                     </div>
                 </div>
+            )}
+
+            {showCheckout && !loading && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-75">
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                        <button onClick={closeModal} className="text-red-500 absolute top-4 right-4 text-2xl">
+                            &times;
+                        </button>
+                        <Elements stripe={stripePromise}>
+                            <CheckoutForm
+                                productIds={cartItems}
+                                totalCost={totalCost}
+                                grandTotal={grandTotal}
+                                email={email}
+                            />
+                        </Elements>
+                    </div>
+                </div>
+            )}
+
+            {showCheckout && loading && (
+                <div className="text-center text-gray-500">Loading Stripe...</div>
             )}
         </div>
     );
