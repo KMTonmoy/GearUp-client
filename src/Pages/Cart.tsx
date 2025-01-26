@@ -2,166 +2,160 @@ import React, { useEffect, useState } from 'react';
 import useUserRole from '../hook/useUserRole';
 import { FaTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import toast from 'react-hot-toast';
+
+interface Product {
+    _id: string;
+    name: string;
+    image: string;
+    price: number;
+    model: string;
+}
 
 interface CartItem {
     _id: string;
     email: string;
     productId: string;
     quantity: number;
-    productName: string;
-    productimage: string;
-    productType: string;
-    productModel: string;
-    __v: number;
-    price: number;
-    description: string;
+    productName?: string;
+    productImage?: string;
+    productModel?: string;
+    price?: number;
 }
 
-interface Product {
-    _id: string;
-    name: string;
-    brand: string;
-    model: string;
-    price: number;
-    type: string;
-    description: string;
-    image: string;
-    quantity: number;
-    inStock: boolean;
-}
-
-const Cart: React.FC = () => {
+const Cart = () => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
     const { email } = useUserRole();
-    const deliveryCharge = 60;
 
     const totalCost = cartItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
+        (acc, item) => acc + (item.price || 0) * item.quantity,
         0
     );
+    const deliveryCharge = cartItems.reduce((acc, item) => acc + item.quantity * 5, 0);
 
     const grandTotal = totalCost + deliveryCharge;
+
     useEffect(() => {
         const fetchCartData = async () => {
+            try {
+                const cartResponse = await fetch(`http://localhost:5000/api/mycartall`);
+                const cartData: { data: CartItem[] } = await cartResponse.json();
+                const filteredCartItems = cartData.data.filter((item) => item.email === email);
 
-            const cartResponse = await fetch(`http://localhost:5000/api/mycartall`);
-            const cartData = await cartResponse.json();
+                const productResponse = await fetch(`http://localhost:5000/api/products`);
+                const productData: { data: Product[] } = await productResponse.json();
 
-            const filteredCartItems = cartData.data.filter((item: CartItem) => item.email === email);
+                const enrichedCartItems = filteredCartItems.map((cartItem) => {
+                    const product = productData.data.find((p) => p._id === cartItem.productId);
+                    if (product) {
+                        return {
+                            ...cartItem,
+                            productName: product.name,
+                            productImage: product.image,
+                            price: product.price,
+                            productModel: product.model,
+                        };
+                    }
+                    return cartItem;
+                });
 
-            const productResponse = await fetch(`http://localhost:5000/api/products`);
-            const productData = await productResponse.json();
-
-            const enrichedCartItems = filteredCartItems.map((cartItem: CartItem) => {
-                const product = productData.data.find((p: Product) => p._id === cartItem.productId);
-                if (product) {
-                    return {
-                        ...cartItem,
-                        productName: product.name,
-                        productimage: product.image,
-                        price: product.price,
-                        productType: product.type,
-                        productModel: product.model,
-                        description: product.description,
-                    };
-                }
-                return cartItem
-            });
-
-            setCartItems(enrichedCartItems);
-            setProducts(productData);
-
-
+                setCartItems(enrichedCartItems);
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
+            }
         };
 
         fetchCartData();
     }, [email]);
 
     const handleRemove = async (productId: string) => {
-
-        const response = await fetch(`http://localhost:5000/api/mycart/${productId}`, {
-            method: 'DELETE',
+        const confirmed = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won’t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
         });
-        const data = await response.json();
-        if (data.success) {
-            setCartItems(cartItems.filter((item) => item._id !== productId));
+
+        if (confirmed.isConfirmed) {
+            const response = await fetch(`http://localhost:5000/api/mycart/${productId}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                setCartItems(cartItems.filter((item) => item._id !== productId));
+                toast.success('Item removed from cart');
+            } else {
+                toast.error('Failed to remove item');
+            }
         }
-
     };
-
-
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">Your Shopping Cart</h1>
             {cartItems.length === 0 ? (
-                <div>Your cart is empty.</div>
+                <div className="text-center text-gray-500 text-lg">Your cart is empty.</div>
             ) : (
                 <div>
                     {cartItems.map((item) => (
-                        <div key={item._id} className="flex items-center justify-between border-b py-4">
-                            <div className="flex items-center">
+                        <div
+                            key={item._id}
+                            className="flex flex-col md:flex-row items-center justify-between border-b py-6 gap-4 md:gap-8"
+                        >
+                            <div className="flex items-center gap-4">
                                 <img
-                                    src={item.productimage}
+                                    src={item.productImage}
                                     alt={item.productName}
-                                    className="w-16 h-16 object-cover mr-4"
+                                    className="w-20 h-20 object-cover rounded-lg shadow-md"
                                 />
                                 <div>
-                                    <h2 className="font-semibold text-lg">{item.productName}</h2>
-                                    <p className="text-sm text-gray-500">{item.productType}</p>
+                                    <h2 className="font-semibold text-lg text-gray-800">{item.productName}</h2>
                                     <p className="text-sm text-gray-500">Model: {item.productModel}</p>
-                                    <p className="text-sm text-gray-500">Item Quantity: {item.quantity}</p>
-                                    <p className="text-sm text-gray-500">View Product: <Link to={`/shop/${item.productId}`}>Go</Link></p>
+                                    <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                                    <p className="text-sm text-blue-600 underline">
+                                        <Link to={`/shop/${item.productId}`}>View Product</Link>
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex items-center">
-                                <span className="text-xl font-bold">${item.price * item.quantity}</span>
-
+                            <div className="flex items-center gap-6">
+                                <span className="text-xl font-bold text-gray-900">${(item.price || 0) * item.quantity}</span>
                                 <button
-                                    className="ml-4 text-red-500"
+                                    className="text-red-500 hover:text-red-700 transition-colors"
                                     onClick={() => handleRemove(item._id)}
                                 >
-                                    <FaTrashAlt />
+                                    <FaTrashAlt size={20} />
                                 </button>
                             </div>
                         </div>
                     ))}
 
-                    <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
-                        <div className="flex justify-between mb-4">
-                            <span className="text-lg font-semibold text-gray-700">
-                                Subtotal:
-                            </span>
-                            <span className="text-lg font-semibold text-gray-800">
-                                {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)}
-                            </span>
+                    <div className="mt-10 bg-gray-100 p-6 rounded-lg shadow-lg">
+                        <div className="flex justify-between items-center mb-4">
+                            <span className="text-lg font-medium text-gray-700">Subtotal:</span>
+                            <span className="text-lg font-semibold text-gray-800">${totalCost.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between mb-4">
-                            <span className="text-lg font-semibold text-gray-700">
-                                Delivery Charge:
-                            </span>
-                            <span className="text-lg font-semibold text-gray-800">
-                                ${deliveryCharge.toFixed(2)}
-                            </span>
+                        <div className="flex justify-between items-center mb-4">
+                            <span className="text-lg font-medium text-gray-700">Delivery Charge:</span>
+                            <span className="text-lg font-semibold text-gray-800">${deliveryCharge.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-xl font-bold text-gray-900">
+                        <div className="flex justify-between items-center text-xl font-bold text-gray-900">
                             <span>Grand Total:</span>
                             <span>${grandTotal.toFixed(2)}</span>
                         </div>
                     </div>
-                    <div className="flex justify-end mt-6">
-                        <button className="bg-orange-600 text-white py-2 px-6 rounded-lg hover:bg-orange-500">
-                            Checkout
+                    <div className="flex justify-end mt-8">
+                        <button className="bg-orange-600 text-white py-3 px-8 rounded-lg shadow-md hover:bg-orange-500 transition-all text-lg">
+                            Proceed to Checkout
                         </button>
                     </div>
                 </div>
-
-
-
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 };
 

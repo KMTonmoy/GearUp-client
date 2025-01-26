@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useLoaderData } from "react-router-dom";
 import useUserRole from "../hook/useUserRole";
+import { toast, Toaster } from 'react-hot-toast';
 
 const ShopDetails = () => {
     const { email } = useUserRole();
@@ -22,7 +23,6 @@ const ShopDetails = () => {
         if (value >= 1 && value <= product.quantity) {
             setSelectedQuantity(value);
         } else {
-            // Handle invalid input
             setError(`Please enter a value between 1 and ${product.quantity}`);
         }
     };
@@ -37,8 +37,6 @@ const ShopDetails = () => {
             productPrice: product.price,
             ProductImage: product.image,
             quantity: selectedQuantity,
-
-        
         };
 
         try {
@@ -51,14 +49,16 @@ const ShopDetails = () => {
             });
 
             const data = await response.json();
-            if (data.success) {
-                alert("Product added to cart!");
+            if (response.status === 400) {
+                toast.error('Product is already in your cart!');
+            } else if (data.success) {
+                toast.success("Product added to cart!");
             } else {
-                alert("Failed to add product to cart.");
+                toast.error("Failed to add product to cart.");
             }
         } catch (error) {
             console.error("Error adding product to cart:", error);
-            alert("Error adding product to cart");
+            toast.error("Error adding product to cart");
         }
     };
 
@@ -78,6 +78,7 @@ const ShopDetails = () => {
             <Helmet>
                 <title>GearUp - {product.name}</title>
             </Helmet>
+            <Toaster></Toaster>
             {product ? (
                 <div className="flex flex-col md:flex-row gap-10 p-6 rounded-lg bg-white shadow-md">
                     <img
@@ -142,12 +143,7 @@ const ShopDetails = () => {
                                 >
                                     Add to Cart
                                 </button>
-                                <button
-                                    className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
-                                    aria-label="Buy now"
-                                >
-                                    Buy it Now
-                                </button>
+
                             </div>
                         </div>
                     </div>
