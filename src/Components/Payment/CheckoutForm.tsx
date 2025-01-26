@@ -3,15 +3,14 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
-    const [error, setError] = useState('');
+const CheckoutForm = ({ productIds, grandTotal, email }) => {
     const [clientSecret, setClientSecret] = useState('');
     const [transactionId, setTransactionId] = useState('');
-    const [loading, setLoading] = useState(false);  // New loading state
+    const [loading, setLoading] = useState(false);
     const stripe = useStripe();
     const elements = useElements();
 
-    // Fetch client secret when grandTotal changes
+
     useEffect(() => {
         if (grandTotal > 0) {
             fetch('http://localhost:5000/api/create-payment-intent', {
@@ -20,9 +19,9 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                   
+
                     price: grandTotal,
-                  
+
                 }),
             })
                 .then(response => response.json())
@@ -40,7 +39,7 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
         }
     }, [grandTotal, email, productIds]);
 
-    // Handle form submission
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -50,25 +49,20 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
 
         const card = elements.getElement(CardElement);
         if (!card) {
-            setError('Payment information not available.');
             return;
         }
 
-        setLoading(true);  // Set loading to true when submitting the payment
-
-        // Create payment method and confirm payment
-        const { error: paymentError, paymentMethod } = await stripe.createPaymentMethod({
+        setLoading(true);
+        const { error: paymentError } = await stripe.createPaymentMethod({
             type: 'card',
             card,
         });
 
         if (paymentError) {
-            setError(paymentError.message);
-            setLoading(false);  // Reset loading state if error occurs
+            setLoading(false);
             return;
         }
 
-        setError('');
 
         const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
@@ -81,8 +75,7 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
         });
 
         if (confirmError) {
-            setError(confirmError.message);
-            setLoading(false);  // Reset loading state if error occurs
+            setLoading(false);
             return;
         }
 
@@ -90,7 +83,7 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
             setTransactionId(paymentIntent.id);
             console.log(paymentIntent.id);
 
-            // Send payment success to your backend
+
             fetch('http://localhost:5000/api/save-payment', {
                 method: 'POST',
                 headers: {
@@ -115,16 +108,10 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
                         timer: 1500,
                     });
                 })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Payment Logging Failed',
-                        text: 'Unable to log payment data. Please contact support.',
-                    });
-                });
+
         }
 
-        setLoading(false);  // Reset loading state after payment
+        setLoading(false);
     };
 
     return (
@@ -149,12 +136,12 @@ const CheckoutForm = ({ productIds, totalCost, grandTotal, email }) => {
             <button
                 className="w-[100px] h-[40px] flex items-center justify-center mx-auto bg-[#F43F5E] text-white font-semibold rounded-md shadow-md transition-transform duration-200 transform hover:scale-105 active:scale-95 my-4"
                 type="submit"
-                disabled={loading || !stripe || !clientSecret}  // Disable while loading
+                disabled={loading || !stripe || !clientSecret}
             >
                 {loading ? 'Processing...' : 'Pay Now'}
             </button>
 
-            {error && <p className="text-red-600">{error}</p>}
+
             {transactionId && (
                 <p className="text-green-600">Your transaction ID: {transactionId}</p>
             )}
