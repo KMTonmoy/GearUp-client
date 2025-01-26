@@ -50,7 +50,7 @@ const FeaturedBicycles: React.FC = () => {
                         <p className="font-semibold text-lg mb-2"><strong>Price:</strong> ${data.price}</p>
                         <p className="text-gray-600 mb-4"><strong>Category:</strong> Bicycle  </p>
                         <Link
-                            to={`/bicycle/${data._id}`}
+                            to={`/shop/${data._id}`}
                             className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition-colors"
                         >
                             View Details

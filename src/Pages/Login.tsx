@@ -36,7 +36,7 @@ const Login = () => {
                 if (res.data.needsPasswordChange) {
                     navigate(`/change-password`);
                 } else {
-                    // navigate(`/`);
+                    navigate(`/`);
                 }
             } else {
                 toast.error(res.message || "Something went wrong", { id: toastId, duration: 2000 });

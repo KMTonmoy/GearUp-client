@@ -5,6 +5,7 @@ import Shop from "../Pages/Shop";
 import ShopDetails from "../Pages/ShopDetails";
 import Login from "../Pages/Login";
 import Signup from "../Pages/Signup";
+import Cart from "../Pages/Cart";
 
 
 
@@ -26,8 +27,12 @@ export const router = createBrowserRouter([
                 element: <Login />,
             },
             {
-                path: "/signup",
+                path: "/register",
                 element: <Signup />,
+            },
+            {
+                path: "/cart",
+                element: <Cart />,
             },
             {
                 path: "/shop/:id",

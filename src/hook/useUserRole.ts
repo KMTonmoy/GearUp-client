@@ -1,13 +1,17 @@
 import { useAppSelector } from "../Components/redux/hooks";
 import { TUser } from "../redux/auth/authSlice";
 
- const useUserRole = (): string | null => {
+const useUserRole = (): { email: string | null, role: string | null } => {
     const user = useAppSelector((state) => state.auth.user);
+
     if (!user) {
-        return null;
+        return { email: null, role: null };
     }
 
-    return user.role;
+    return {
+        email: user.email,
+        role: user.role
+    };
 };
 
 export default useUserRole;

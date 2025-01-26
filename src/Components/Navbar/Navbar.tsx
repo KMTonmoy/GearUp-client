@@ -6,10 +6,14 @@ import { IoSearchOutline } from "react-icons/io5";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
 import useUserRole from '../../hook/useUserRole';
 
 const Navbar = () => {
-    const role = useUserRole();
+    const { role } = useUserRole();
+
+
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -21,8 +25,24 @@ const Navbar = () => {
     const isActive = (path: string) => location.pathname === path ? 'text-orange-600' : '';
 
     const handleLogout = () => {
-        localStorage.clear();
-        navigate('/login');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to undo this action!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff9d00',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, logout!',
+            cancelButtonText: 'No, cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.clear();
+                navigate('/login');
+
+                Swal.fire('Logged out!', 'You have been logged out.', 'success');
+                window.location.reload();
+            }
+        });
     };
 
     return (
@@ -53,20 +73,21 @@ const Navbar = () => {
                         <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/shop'>
                             <IoSearchOutline />
                         </Link>
-                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/login'>
-                            <FaRegUser />
-                        </Link>
-                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
-                            <LuShoppingBag />
-                        </Link>
-                        {role && (
+                        {!role ? (
+                            <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/login'>
+                                <FaRegUser />
+                            </Link>
+                        ) : (
                             <button
-                                className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300'
+                                className='text-[17px] bg-orange-600 text-white font-[600] hover:bg-orange-500 py-1 px-4 rounded transition-colors duration-300'
                                 onClick={handleLogout}
                             >
                                 Logout
                             </button>
                         )}
+                        <Link className='text-[27px] font-[600] hover:text-orange-600 transition-colors duration-300' to='/cart'>
+                            <LuShoppingBag />
+                        </Link>
                         <button className='md:hidden text-[27px] hover:text-orange-600 transition-colors duration-300' onClick={toggleMenu}>
                             <HiOutlineMenuAlt3 />
                         </button>

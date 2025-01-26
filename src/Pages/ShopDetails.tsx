@@ -1,24 +1,83 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useLoaderData } from "react-router-dom";
+import useUserRole from "../hook/useUserRole";
 
 const ShopDetails = () => {
+    const { email } = useUserRole();
     const loadProduct = useLoaderData();
     const product = loadProduct?.data;
     const [selectedQuantity, setSelectedQuantity] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (product) {
+            setLoading(false);
+        }
+    }, [product]);
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Number(e.target.value);
-        if (value > 0 && value <= product.quantity) {
+        if (value >= 1 && value <= product.quantity) {
             setSelectedQuantity(value);
+        } else {
+            // Handle invalid input
+            setError(`Please enter a value between 1 and ${product.quantity}`);
         }
     };
 
+    const handleAddToCart = async () => {
+        const sendData = {
+            email,
+            productId: product._id,
+            productName: product.name,
+            productType: product.type,
+            productModel: product.model,
+            productPrice: product.price,
+            ProductImage: product.image,
+            quantity: selectedQuantity,
+
+        
+        };
+
+        try {
+            const response = await fetch("http://localhost:5000/api/mycart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(sendData),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert("Product added to cart!");
+            } else {
+                alert("Failed to add product to cart.");
+            }
+        } catch (error) {
+            console.error("Error adding product to cart:", error);
+            alert("Error adding product to cart");
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="text-center text-xl text-gray-600">
+                <span>Loading product details...</span>
+                <div className="spinner-border text-orange-600 mt-4" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-7xl my-20 mx-auto">
-             <Helmet>
-                 <title>GearUp - {product.name}</title>
-             </Helmet>
+            <Helmet>
+                <title>GearUp - {product.name}</title>
+            </Helmet>
             {product ? (
                 <div className="flex flex-col md:flex-row gap-10 p-6 rounded-lg bg-white shadow-md">
                     <img
@@ -68,16 +127,25 @@ const ShopDetails = () => {
                                     min={1}
                                     max={product.quantity}
                                     className="border border-gray-300 rounded-lg p-2 mt-1 w-28"
+                                    aria-label="Select quantity"
                                 />
                                 <p className="text-sm text-gray-500 mt-1">
                                     Available: {product.quantity}
                                 </p>
+                                {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
                             </div>
                             <div className="flex gap-4">
-                                <button className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all">
+                                <button
+                                    className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
+                                    onClick={handleAddToCart}
+                                    aria-label="Add to cart"
+                                >
                                     Add to Cart
                                 </button>
-                                <button className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all">
+                                <button
+                                    className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
+                                    aria-label="Buy now"
+                                >
                                     Buy it Now
                                 </button>
                             </div>
@@ -85,7 +153,7 @@ const ShopDetails = () => {
                     </div>
                 </div>
             ) : (
-                <div className="text-center text-xl text-gray-600">Loading product details...</div>
+                <div className="text-center text-xl text-gray-600">Product details not found</div>
             )}
         </div>
     );
