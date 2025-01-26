@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import useUserRole from "../hook/useUserRole";
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -73,6 +73,14 @@ const ShopDetails = () => {
         );
     }
 
+
+
+    const toastShow = () => {
+        toast.error("Please Login to add product to cart");
+
+    }
+
+
     return (
         <div className="max-w-7xl my-20 mx-auto">
             <Helmet>
@@ -136,13 +144,29 @@ const ShopDetails = () => {
                                 {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
                             </div>
                             <div className="flex gap-4">
-                                <button
-                                    className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
-                                    onClick={handleAddToCart}
-                                    aria-label="Add to cart"
-                                >
-                                    Add to Cart
-                                </button>
+
+                                {
+                                    email ? (
+                                        <button
+                                            className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
+                                            onClick={handleAddToCart}
+                                            aria-label="Add to cart"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    ) : (
+
+                                        <button
+                                            className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-all"
+                                            aria-label="Add to cart"
+                                            onClick={toastShow}
+                                        >
+                                            Add to Cart
+                                        </button>
+
+                                    )
+                                }
+
 
                             </div>
                         </div>
