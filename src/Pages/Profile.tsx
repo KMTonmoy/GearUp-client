@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useUserRole from '../hook/useUserRole';
 
 const Profile = () => {
@@ -12,7 +12,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch('https://gearupback.vercel.app/api/usersgetall');
+                const response = await fetch('https://gearupserver.vercel.app/api/usersgetall');
                 const data = await response.json();
                 const currentUser = data.data.filter((user: { email: string }) => user.email === email)[0];
                 setUserData(currentUser);
@@ -41,9 +41,9 @@ const Profile = () => {
             if (!token) {
                 return alert('No token found. Please log in again.');
             }
-console.log(token)
+            console.log(token)
             try {
-                const response = await fetch(`https://gearupback.vercel.app/api/user/${userData._id}`, {
+                const response = await fetch(`https://gearupserver.vercel.app/api/user/${userData._id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',

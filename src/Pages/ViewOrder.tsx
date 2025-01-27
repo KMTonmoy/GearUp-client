@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FaBoxOpen, FaShoppingCart, FaProductHunt, FaChartLine } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+
 import useUserRole from '../hook/useUserRole';
 
 interface CartItem {
@@ -21,6 +21,7 @@ interface Product {
 }
 
 interface OrderItem {
+    _id: string;
     email: string;
     orderId: string;
     products: Array<{ productId: string; quantity: number }>;
@@ -42,11 +43,11 @@ const ViewOrder = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-                const cartResponse = await fetch(`https://gearupback.vercel.app/api/mycartall`);
+                const cartResponse = await fetch(`https://gearupserver.vercel.app/api/mycartall`);
                 const cartData = await cartResponse.json();
                 const filteredCartItems = cartData.data.filter((item: CartItem) => item.email === email);
 
-                const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
+                const productResponse = await fetch(`https://gearupserver.vercel.app/api/products`);
                 const productData = await productResponse.json();
                 setProducts(productData.data);
 
@@ -72,7 +73,7 @@ const ViewOrder = () => {
 
         const fetchOrdersData = async () => {
             try {
-                const ordersResponse = await fetch(`https://gearupback.vercel.app/api/payments`);
+                const ordersResponse = await fetch(`https://gearupserver.vercel.app/api/payments`);
                 const ordersData = await ordersResponse.json();
 
 

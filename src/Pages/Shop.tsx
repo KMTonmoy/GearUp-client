@@ -25,7 +25,7 @@ const Shop: React.FC = () => {
     const [visibleProducts, setVisibleProducts] = useState(9);
 
     useEffect(() => {
-        fetch('https://gearupback.vercel.app/api/products')
+        fetch('https://gearupserver.vercel.app/api/products')
             .then((response) => response.json())
             .then((data) => {
                 setProducts(data.data);

@@ -29,7 +29,7 @@ const Signup = () => {
             const toastId = toast.loading("Creating your account...");
 
 
-            const response = await fetch("https://gearupback.vercel.app/api/auth/register", {
+            const response = await fetch("https://gearupserver.vercel.app/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

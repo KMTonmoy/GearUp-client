@@ -48,11 +48,11 @@ const Cart: React.FC = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-                const cartResponse = await fetch(`https://gearupback.vercel.app/api/mycartall`);
+                const cartResponse = await fetch(`https://gearupserver.vercel.app/api/mycartall`);
                 const cartData: { data: CartItem[] } = await cartResponse.json();
                 const filteredCartItems = cartData.data.filter((item) => item.email === email);
 
-                const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
+                const productResponse = await fetch(`https://gearupserver.vercel.app/api/products`);
                 const productData: { data: Product[] } = await productResponse.json();
 
                 const enrichedCartItems = filteredCartItems.map((cartItem) => {
@@ -105,7 +105,7 @@ const Cart: React.FC = () => {
 
         if (confirmed.isConfirmed) {
 
-            const response = await fetch(`https://gearupback.vercel.app/api/mycart/${productId}`, {
+            const response = await fetch(`https://gearupserver.vercel.app/api/mycart/${productId}`, {
                 method: 'DELETE',
             });
             const data = await response.json();
@@ -122,7 +122,7 @@ const Cart: React.FC = () => {
 
     const handlePlaceOrder = async () => {
         try {
-            const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
+            const productResponse = await fetch(`https://gearupserver.vercel.app/api/products`);
             const productData: { success: boolean; message: string; data: Product[] } = await productResponse.json();
 
             if (productData.success) {

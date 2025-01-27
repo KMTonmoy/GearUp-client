@@ -18,7 +18,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ productIds, grandTotal, ema
 
     useEffect(() => {
         if (grandTotal > 0) {
-            fetch('https://gearupback.vercel.app/api/create-payment-intent', {
+            fetch('https://gearupserver.vercel.app/api/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ productIds, grandTotal, ema
             setTransactionId(paymentIntent.id);
             console.log('Payment successful, transaction ID:', paymentIntent.id);
 
-            fetch('https://gearupback.vercel.app/api/save-payment', {
+            fetch('https://gearupserver.vercel.app/api/save-payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

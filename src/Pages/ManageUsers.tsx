@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -7,6 +7,7 @@ interface User {
     _id: string;
     name: string;
     isBlocked: boolean;
+    email: string
 }
 
 const ManageUsers = () => {
@@ -15,7 +16,7 @@ const ManageUsers = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('https://gearupback.vercel.app/api/usersgetall');
+                const response = await axios.get('https://gearupserver.vercel.app/api/usersgetall');
                 setUsers(response.data.data);
             } catch (error) {
                 toast.error('Failed to fetch users!');
@@ -37,7 +38,7 @@ const ManageUsers = () => {
             const token = parsedAuth.token.replace(/"/g, '');
 
             const response = await axios.patch(
-                `https://gearupback.vercel.app/api/admin/users/${userId}/block`,
+                `https://gearupserver.vercel.app/api/admin/users/${userId}/block`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -64,7 +65,7 @@ const ManageUsers = () => {
             const token = parsedAuth.token.replace(/"/g, '');
 
             const response = await axios.patch(
-                `https://gearupback.vercel.app/api/admin/users/${userId}/unblock`,
+                `https://gearupserver.vercel.app/api/admin/users/${userId}/unblock`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );

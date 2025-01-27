@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
             {
                 path: "/shop/:id",
                 element: <ShopDetails />,
-                loader: ({ params }) => fetch(`https://gearupback.vercel.app/api/products/${params.id}`),
+                loader: ({ params }) => fetch(`https://gearupserver.vercel.app/api/products/${params.id}`),
 
 
             },

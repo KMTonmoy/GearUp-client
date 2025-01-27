@@ -2,8 +2,14 @@ import { BaseQueryApi, BaseQueryFn, DefinitionType, FetchArgs, createApi, fetchB
 import { RootState } from '../store';
 import { logout, setUser } from '../slices/authSlice';
 
+interface RefreshResponse {
+  token: string;
+  user: any;
+  refreshToken: string;
+}
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://gearupback.vercel.app/api',
+  baseUrl: 'https://gearupserver.vercel.app/api',
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -16,11 +22,7 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithRefreshToken: BaseQueryFn<
-  FetchArgs,
-  BaseQueryApi,
-  DefinitionType
-> = async (args, api, extraOptions): Promise<any> => {
+const baseQueryWithRefreshToken: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {
@@ -33,8 +35,8 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     );
 
     if (refreshResult.data) {
-      const { token } = refreshResult.data;
-      api.dispatch(setUser({ token }));
+      const { token, user, refreshToken: newRefreshToken } = refreshResult.data as RefreshResponse;
+      api.dispatch(setUser({ user, token, refreshToken: newRefreshToken }));
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());

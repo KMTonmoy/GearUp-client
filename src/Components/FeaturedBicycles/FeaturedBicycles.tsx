@@ -18,7 +18,7 @@ const FeaturedBicycles: React.FC = () => {
     useEffect(() => {
         const fetchBicycles = async () => {
             try {
-                const response = await fetch('https://gearupback.vercel.app/api/products');
+                const response = await fetch('https://gearupserver.vercel.app/api/products');
                 const data = await response.json();
                 setBicycles(data.data);
                 setLoading(false);

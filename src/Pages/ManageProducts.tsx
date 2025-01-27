@@ -37,13 +37,13 @@ const ManageProducts = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await axios.get('https://gearupback.vercel.app/api/products');
+            const response = await axios.get('https://gearupserver.vercel.app/api/products');
             setProducts(response.data.data);
         };
         fetchProducts();
     }, []);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setNewProduct((prev) => ({ ...prev, [name]: value }));
     };
@@ -63,7 +63,7 @@ const ManageProducts = () => {
         const imageUrl = await imageUpload(image);
         const newProductData = { ...newProduct, image: imageUrl };
 
-        const response = await axios.post('https://gearupback.vercel.app/api/products', newProductData);
+        const response = await axios.post('https://gearupserver.vercel.app/api/products', newProductData);
         if (response.data.success) {
             setProducts([...products, response.data.product]);
             setModalOpen(false);
@@ -74,15 +74,15 @@ const ManageProducts = () => {
     const handleUpdateProduct = async () => {
         if (!selectedProduct) return;
 
-        let imageUrl = selectedProduct.image; // Keep the old image URL
+        let imageUrl = selectedProduct.image;
 
         if (image) {
-            imageUrl = await imageUpload(image); // Upload new image if provided
+            imageUrl = await imageUpload(image);
         }
 
         const updatedProductData = { ...selectedProduct, image: imageUrl };
 
-        const response = await axios.put(`https://gearupback.vercel.app/api/products/${selectedProduct._id}`, updatedProductData);
+        const response = await axios.put(`https://gearupserver.vercel.app/api/products/${selectedProduct._id}`, updatedProductData);
         if (response.data.success) {
             setProducts(products.map((prod) => (prod._id === selectedProduct._id ? updatedProductData : prod)));
             setUpdateModalOpen(false);
@@ -101,7 +101,7 @@ const ManageProducts = () => {
             confirmButtonText: 'Yes, delete it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const response = await axios.delete(`https://gearupback.vercel.app/api/products/${id}`);
+                const response = await axios.delete(`https://gearupserver.vercel.app/api/products/${id}`);
                 if (response.data.success) {
                     setProducts(products.filter((prod) => prod._id !== id));
                     Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
@@ -120,7 +120,7 @@ const ManageProducts = () => {
 
     const handleCloseUpdateModal = () => setUpdateModalOpen(false);
 
-    const handleUpdateInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleUpdateInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setSelectedProduct((prev) => (prev ? { ...prev, [name]: value } : prev));
     };
