@@ -47,7 +47,7 @@ const Cart: React.FC = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
- 
+
                 const paymentRes = await fetch(`http://localhost:5000/api/payments`);
 
                 console.log(paymentRes)
@@ -57,7 +57,7 @@ const Cart: React.FC = () => {
 
                 const cartData: { data: CartItem[] } = await cartResponse.json();
                 const filteredCartItems = cartData.data.filter((item) => item.email === email);
-  
+
                 const productResponse = await fetch(`http://localhost:5000/api/products`);
                 const productData: { data: Product[] } = await productResponse.json();
 
@@ -96,7 +96,7 @@ const Cart: React.FC = () => {
     }, []);
 
 
- 
+
     const handleRemove = async (productId: string) => {
         const confirmed = await Swal.fire({
             title: 'Are you sure?',
@@ -210,6 +210,7 @@ const Cart: React.FC = () => {
                                 productIds={cartItems}
                                 totalCost={totalCost}
                                 grandTotal={grandTotal}
+                                quantity={quantity}
                                 email={email}
                             />
                         </Elements>
