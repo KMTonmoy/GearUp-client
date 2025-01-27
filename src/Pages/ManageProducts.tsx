@@ -74,7 +74,7 @@ const ManageProducts = () => {
     const handleUpdateProduct = async () => {
         if (!selectedProduct) return;
 
-        let imageUrl = selectedProduct.image;
+        let imageUrl = selectedProduct?.image;
 
         if (image) {
             imageUrl = await imageUpload(image);
@@ -82,9 +82,9 @@ const ManageProducts = () => {
 
         const updatedProductData = { ...selectedProduct, image: imageUrl };
 
-        const response = await axios.put(`https://gearupserver.vercel.app/api/products/${selectedProduct._id}`, updatedProductData);
+        const response = await axios.put(`https://gearupserver.vercel.app/api/products/${selectedProduct?._id}`, updatedProductData);
         if (response.data.success) {
-            setProducts(products.map((prod) => (prod._id === selectedProduct._id ? updatedProductData : prod)));
+            setProducts(products.map((prod) => (prod._id === selectedProduct?._id ? updatedProductData : prod)));
             setUpdateModalOpen(false);
             toast.success('Product updated successfully!');
         }
@@ -138,14 +138,14 @@ const ManageProducts = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                    <div key={product._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
-                        <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-lg mb-4" />
-                        <h4 className="text-lg font-medium text-gray-800">{product.name}</h4>
-                        <p className="text-sm text-gray-500">{product.brand} - {product.model}</p>
-                        <p className="text-sm text-gray-500">{product.type}</p>
-                        <p className="text-sm text-gray-500">{product.price} USD</p>
-                        <p className="text-sm text-gray-500">{product.description}</p>
-                        <p className="text-sm text-gray-500">In stock: {product.quantity}</p>
+                    <div key={product?._id} className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                        <img src={product?.image} alt={product?.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+                        <h4 className="text-lg font-medium text-gray-800">{product?.name}</h4>
+                        <p className="text-sm text-gray-500">{product?.brand} - {product?.model}</p>
+                        <p className="text-sm text-gray-500">{product?.type}</p>
+                        <p className="text-sm text-gray-500">{product?.price} USD</p>
+                        <p className="text-sm text-gray-500">{product?.description}</p>
+                        <p className="text-sm text-gray-500">In stock: {product?.quantity}</p>
 
                         <div className="flex space-x-2 mt-4">
                             <button
@@ -155,7 +155,7 @@ const ManageProducts = () => {
                                 Edit
                             </button>
                             <button
-                                onClick={() => handleDeleteProduct(product._id!)}
+                                onClick={() => handleDeleteProduct(product?._id!)}
                                 className="text-red-600 hover:text-red-800 transition duration-200"
                             >
                                 Delete
@@ -174,7 +174,7 @@ const ManageProducts = () => {
                             type="text"
                             id="name"
                             name="name"
-                            value={newProduct.name}
+                            value={newProduct?.name}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -195,7 +195,7 @@ const ManageProducts = () => {
                             type="text"
                             id="brand"
                             name="brand"
-                            value={newProduct.brand}
+                            value={newProduct?.brand}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -206,7 +206,7 @@ const ManageProducts = () => {
                             type="text"
                             id="model"
                             name="model"
-                            value={newProduct.model}
+                            value={newProduct?.model}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -217,7 +217,7 @@ const ManageProducts = () => {
                             type="number"
                             id="price"
                             name="price"
-                            value={newProduct.price}
+                            value={newProduct?.price}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -228,7 +228,7 @@ const ManageProducts = () => {
                             type="number"
                             id="quantity"
                             name="quantity"
-                            value={newProduct.quantity}
+                            value={newProduct?.quantity}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
@@ -238,7 +238,7 @@ const ManageProducts = () => {
                         <select
                             id="type"
                             name="type"
-                            value={newProduct.type}
+                            value={newProduct?.type}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         >
@@ -254,7 +254,7 @@ const ManageProducts = () => {
                         <textarea
                             id="description"
                             name="description"
-                            value={newProduct.description}
+                            value={newProduct?.description}
                             onChange={handleInputChange}
                             className="w-full p-2 border border-gray-300 rounded-md"
                         />
