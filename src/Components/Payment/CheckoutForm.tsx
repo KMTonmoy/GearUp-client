@@ -1,13 +1,17 @@
-'use client';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-const CheckoutForm = ({ productIds, grandTotal, email }) => {
+interface CheckoutFormProps {
+    productIds: string[];
+    grandTotal: number;
+    email: string;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ productIds, grandTotal, email }) => {
     const [clientSecret, setClientSecret] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [loading, setLoading] = useState(false);
-
 
     const stripe = useStripe();
     const elements = useElements();
@@ -38,9 +42,7 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
         }
     }, [grandTotal, email, productIds]);
 
-
-
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         if (!stripe || !elements) {
@@ -82,8 +84,6 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
             setTransactionId(paymentIntent.id);
             console.log('Payment successful, transaction ID:', paymentIntent.id);
 
-
-            // Save Payment
             fetch('https://gearupback.vercel.app/api/save-payment', {
                 method: 'POST',
                 headers: {
@@ -91,7 +91,7 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
                 },
                 body: JSON.stringify({
                     email: email,
-                    orderdProducts: productIds, 
+                    orderedProducts: productIds,
                     price: grandTotal,
                     transactionId: paymentIntent.id,
                     paymentStatus: 'succeeded',
@@ -108,14 +108,10 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
                         timer: 1500,
                     });
                 });
-
-
-
         }
 
         setLoading(false);
     };
-
 
     return (
         <form onSubmit={handleSubmit} className="rounded-2xl">

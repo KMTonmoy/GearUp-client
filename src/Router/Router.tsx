@@ -7,7 +7,6 @@ import Login from "../Pages/Login";
 import Signup from "../Pages/Signup";
 import Cart from "../Pages/Cart";
 import About from "../Pages/About";
-import ContactUs from "../Pages/contactus";
 import DashboardLayout from "../Layout/DashboardLayout";
 import DashboardHome from "../Pages/DashboardHome";
 import ManageUsers from "../Pages/ManageUsers";
@@ -15,6 +14,7 @@ import ManageProducts from "../Pages/ManageProducts";
 import Blogs from "../Pages/Blogs";
 import ViewOrder from "../Pages/ViewOrder";
 import Profile from "../Pages/Profile";
+import ContactUs from "../Pages/Contactus";
 
 
 

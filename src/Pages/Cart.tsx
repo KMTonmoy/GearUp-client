@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import CheckoutForm from '../Components/Payment/CheckoutForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+
 const stripePromise = loadStripe(
     'pk_test_51PLRDh1ER2eQQaKOIacKieEoEcmrxq1iXUsfZCu7itWd6KAMzuQyotjLWrjKag3KzgTsvZooEDBnfsfyVGMbznhJ00vAOF7I33'
 );
@@ -69,15 +70,15 @@ const Cart: React.FC = () => {
                     return cartItem;
                 });
 
-                console.log(enrichedCartItems)
-
                 setCartItems(enrichedCartItems);
             } catch (error) {
                 console.error('Error fetching cart data:', error);
             }
         };
 
-        fetchCartData();
+        if (email) {
+            fetchCartData();
+        }
     }, [email]);
 
     useEffect(() => {
@@ -103,42 +104,45 @@ const Cart: React.FC = () => {
         });
 
         if (confirmed.isConfirmed) {
-            try {
-                const response = await fetch(`https://gearupback.vercel.app/api/mycart/${productId}`, {
-                    method: 'DELETE',
-                });
-                const data = await response.json();
 
-                if (data.success) {
-                    setCartItems((prevItems) => prevItems.filter((item) => item._id !== productId));
-                    toast.success('Item removed from cart');
-                } else {
-                    toast.error('Failed to remove item');
-                }
-            } catch (error) {
-                toast.error('Error removing item');
+            const response = await fetch(`https://gearupback.vercel.app/api/mycart/${productId}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                setCartItems((prevItems) => prevItems.filter((item) => item._id !== productId));
+                toast.success('Item removed from cart');
+            } else {
+                toast.error('Failed to remove item');
             }
+
         }
     };
 
     const handlePlaceOrder = async () => {
-        const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
-        const productData: { success: boolean; message: string; data: Product[] } = await productResponse.json();
+        try {
+            const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
+            const productData: { success: boolean; message: string; data: Product[] } = await productResponse.json();
 
-        if (productData.success) {
-            const unavailableItems = cartItems.filter((item) => {
-                const product = productData.data.find((p) => p._id === item.productId);
-                return product ? item.quantity > product.stock : true;
-            });
+            if (productData.success) {
+                const unavailableItems = cartItems.filter((item) => {
+                    const product = productData.data.find((p) => p._id === item.productId);
+                    return product ? item.quantity > product.stock : true;
+                });
 
-            if (unavailableItems.length > 0) {
-                const unavailableProductNames = unavailableItems.map((item) => item.productName).join(', ');
-                toast.error(`The following products are not available in sufficient quantity: ${unavailableProductNames}`);
+                if (unavailableItems.length > 0) {
+                    const unavailableProductNames = unavailableItems.map((item) => item.productName).join(', ');
+                    toast.error(`The following products are not available in sufficient quantity: ${unavailableProductNames}`);
+                } else {
+                    setShowCheckout(true);
+                }
             } else {
-                setShowCheckout(true);
+                toast.error("Failed to retrieve product data.");
             }
-        } else {
-            toast.error("Failed to retrieve product data.");
+        } catch (error) {
+            console.error('Error placing order:', error);
+            toast.error('Failed to place order. Please try again.');
         }
     };
 
@@ -218,10 +222,9 @@ const Cart: React.FC = () => {
                         </button>
                         <Elements stripe={stripePromise}>
                             <CheckoutForm
-                                productIds={cartItems}
-                                totalCost={totalCost}
+                                productIds={cartItems.map(item => item.productId)} // Pass only product IDs
                                 grandTotal={grandTotal}
-                                email={email}
+                                email={email || ''}
                             />
                         </Elements>
                     </div>
@@ -229,7 +232,9 @@ const Cart: React.FC = () => {
             )}
 
             {showCheckout && loading && (
-                <div className="text-center text-gray-500">Loading Stripe...</div>
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-75">
+                    <div className="text-white text-lg">Loading Stripe...</div>
+                </div>
             )}
         </div>
     );

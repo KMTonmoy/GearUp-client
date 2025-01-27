@@ -1,5 +1,4 @@
 import { useAppSelector } from "../Components/redux/hooks";
-import { TUser } from "../redux/auth/authSlice";
 
 const useUserRole = (): { email: string | null, role: string | null } => {
     const user = useAppSelector((state) => state.auth.user);
