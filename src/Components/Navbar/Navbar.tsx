@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+ import  { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LuShoppingBag } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
@@ -70,13 +70,20 @@ const Navbar = () => {
                         ))}
 
 
-                        <Link
-                            to={`/dashboard`}
-                            className={`text-[17px] font-[600] relative group transition-all duration-300 ${isActive('/dashboard')}`}
-                        >
-                            Dashboard
-                            <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                        </Link>
+                        {role ? (
+                            <Link
+                                to={`/dashboard`}
+                                className={`text-[17px] font-[600] relative group transition-all duration-300 ${isActive('/dashboard')}`}
+                            >
+                                Dashboard
+                                <span className="absolute left-0 bottom-[-2px] h-[2px] w-0 bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                        ) : (
+                            <>
+                            </>
+                        )}
+
+
 
 
                     </div>

@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const Faq = () => {
-    const [activeIndex, setActiveIndex] = useState(null);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
-        "https://www.panoramaresort.com/assets/Bike-Park/PMR-mtb-june29-131-2000__FocusFillWzE4MDAsMTA4MCwieSIsNjBd.jpg", 
-        "https://www.elite-wheels.com/wp-content/uploads/2023/08/Gravel-Bike-Cover.jpg", 
-        "https://i0.wp.com/theinscribermag.com/wp-content/uploads/2023/12/Elektrofahrrad_Riemenantrieb_E-Bike_02.jpg", 
-        "https://vauxbicycle.com/wp-content/uploads/2024/08/faq-Banner.jpg", 
+        "https://www.panoramaresort.com/assets/Bike-Park/PMR-mtb-june29-131-2000__FocusFillWzE4MDAsMTA4MCwieSIsNjBd.jpg",
+        "https://www.elite-wheels.com/wp-content/uploads/2023/08/Gravel-Bike-Cover.jpg",
+        "https://i0.wp.com/theinscribermag.com/wp-content/uploads/2023/12/Elektrofahrrad_Riemenantrieb_E-Bike_02.jpg",
+        "https://vauxbicycle.com/wp-content/uploads/2024/08/faq-Banner.jpg",
         "https://respark.iitm.ac.in/wp-content/uploads/2019/08/A-start-up-reimagining.jpg"
     ];
 
-    // Rotating images every 5 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         }, 5000);
 
-        return () => clearInterval(interval); // Cleanup interval on unmount
+        return () => clearInterval(interval);
     }, []);
 
     const faqs = [
@@ -48,7 +47,7 @@ const Faq = () => {
         },
     ];
 
-    const handleToggle = (index) => {
+    const handleToggle = (index: number) => {
         if (activeIndex === index) {
             setActiveIndex(null);
         } else {
@@ -57,9 +56,8 @@ const Faq = () => {
     };
 
     return (
-        <div className=" py-16">
+        <div className="py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 items-center">
-                {/* Left side - Image carousel */}
                 <div className="w-full md:w-1/2 relative">
                     <img
                         src={images[currentImageIndex]}
@@ -67,8 +65,6 @@ const Faq = () => {
                         className="w-full h-[400px] object-cover rounded-lg shadow-lg transition-all duration-500 ease-in-out opacity-90 hover:opacity-100"
                     />
                 </div>
-
-                {/* Right side - FAQ Accordion */}
                 <div className="w-full md:w-1/2">
                     <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">Frequently Asked Questions</h2>
                     <div className="space-y-6">

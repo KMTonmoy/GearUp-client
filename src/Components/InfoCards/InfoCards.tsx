@@ -1,4 +1,4 @@
-import React from 'react';
+ 
 import { FaCaretRight } from "react-icons/fa";
 
 const InfoCards = () => {

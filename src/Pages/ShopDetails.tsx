@@ -40,7 +40,7 @@ const ShopDetails = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:5000/api/mycart", {
+            const response = await fetch("https://gearupback.vercel.app/api/mycart", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

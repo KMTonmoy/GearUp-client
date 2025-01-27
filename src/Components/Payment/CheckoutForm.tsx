@@ -7,21 +7,20 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
     const [clientSecret, setClientSecret] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [loading, setLoading] = useState(false);
+
+
     const stripe = useStripe();
     const elements = useElements();
 
-
     useEffect(() => {
         if (grandTotal > 0) {
-            fetch('http://localhost:5000/api/create-payment-intent', {
+            fetch('https://gearupback.vercel.app/api/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-
                     price: grandTotal,
-
                 }),
             })
                 .then(response => response.json())
@@ -38,6 +37,7 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
                 });
         }
     }, [grandTotal, email, productIds]);
+
 
 
     const handleSubmit = async (event) => {
@@ -63,7 +63,6 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
             return;
         }
 
-
         const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
                 card,
@@ -81,17 +80,18 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
 
         if (paymentIntent.status === 'succeeded') {
             setTransactionId(paymentIntent.id);
-            console.log(paymentIntent.id);
+            console.log('Payment successful, transaction ID:', paymentIntent.id);
 
 
-            fetch('http://localhost:5000/api/save-payment', {
+            // Save Payment
+            fetch('https://gearupback.vercel.app/api/save-payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     email: email,
-                    orderdProducts: productIds,
+                    orderdProducts: productIds, 
                     price: grandTotal,
                     transactionId: paymentIntent.id,
                     paymentStatus: 'succeeded',
@@ -107,12 +107,15 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
                         showConfirmButton: false,
                         timer: 1500,
                     });
-                })
+                });
+
+
 
         }
 
         setLoading(false);
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="rounded-2xl">
@@ -140,7 +143,6 @@ const CheckoutForm = ({ productIds, grandTotal, email }) => {
             >
                 {loading ? 'Processing...' : 'Pay Now'}
             </button>
-
 
             {transactionId && (
                 <p className="text-green-600">Your transaction ID: {transactionId}</p>

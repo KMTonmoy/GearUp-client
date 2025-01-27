@@ -11,13 +11,13 @@ const stripePromise = loadStripe(
     'pk_test_51PLRDh1ER2eQQaKOIacKieEoEcmrxq1iXUsfZCu7itWd6KAMzuQyotjLWrjKag3KzgTsvZooEDBnfsfyVGMbznhJ00vAOF7I33'
 );
 
-
 interface Product {
     _id: string;
     name: string;
     image: string;
     price: number;
     model: string;
+    stock: number;
 }
 
 interface CartItem {
@@ -47,18 +47,11 @@ const Cart: React.FC = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-
-                const paymentRes = await fetch(`http://localhost:5000/api/payments`);
-
-                console.log(paymentRes)
-
-
-                const cartResponse = await fetch(`http://localhost:5000/api/mycartall`);
-
+                const cartResponse = await fetch(`https://gearupback.vercel.app/api/mycartall`);
                 const cartData: { data: CartItem[] } = await cartResponse.json();
                 const filteredCartItems = cartData.data.filter((item) => item.email === email);
 
-                const productResponse = await fetch(`http://localhost:5000/api/products`);
+                const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
                 const productData: { data: Product[] } = await productResponse.json();
 
                 const enrichedCartItems = filteredCartItems.map((cartItem) => {
@@ -70,10 +63,13 @@ const Cart: React.FC = () => {
                             productImage: product.image,
                             price: product.price,
                             productModel: product.model,
+                            stock: product.stock,
                         };
                     }
                     return cartItem;
                 });
+
+                console.log(enrichedCartItems)
 
                 setCartItems(enrichedCartItems);
             } catch (error) {
@@ -95,8 +91,6 @@ const Cart: React.FC = () => {
         checkStripeLoaded();
     }, []);
 
-
-
     const handleRemove = async (productId: string) => {
         const confirmed = await Swal.fire({
             title: 'Are you sure?',
@@ -110,7 +104,7 @@ const Cart: React.FC = () => {
 
         if (confirmed.isConfirmed) {
             try {
-                const response = await fetch(`http://localhost:5000/api/mycart/${productId}`, {
+                const response = await fetch(`https://gearupback.vercel.app/api/mycart/${productId}`, {
                     method: 'DELETE',
                 });
                 const data = await response.json();
@@ -127,8 +121,25 @@ const Cart: React.FC = () => {
         }
     };
 
-    const handlePlaceOrder = () => {
-        setShowCheckout(true);
+    const handlePlaceOrder = async () => {
+        const productResponse = await fetch(`https://gearupback.vercel.app/api/products`);
+        const productData: { success: boolean; message: string; data: Product[] } = await productResponse.json();
+
+        if (productData.success) {
+            const unavailableItems = cartItems.filter((item) => {
+                const product = productData.data.find((p) => p._id === item.productId);
+                return product ? item.quantity > product.stock : true;
+            });
+
+            if (unavailableItems.length > 0) {
+                const unavailableProductNames = unavailableItems.map((item) => item.productName).join(', ');
+                toast.error(`The following products are not available in sufficient quantity: ${unavailableProductNames}`);
+            } else {
+                setShowCheckout(true);
+            }
+        } else {
+            toast.error("Failed to retrieve product data.");
+        }
     };
 
     const closeModal = () => {
@@ -210,7 +221,6 @@ const Cart: React.FC = () => {
                                 productIds={cartItems}
                                 totalCost={totalCost}
                                 grandTotal={grandTotal}
-                                quantity={quantity}
                                 email={email}
                             />
                         </Elements>

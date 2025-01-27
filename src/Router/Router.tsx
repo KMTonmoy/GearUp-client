@@ -12,6 +12,9 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import DashboardHome from "../Pages/DashboardHome";
 import ManageUsers from "../Pages/ManageUsers";
 import ManageProducts from "../Pages/ManageProducts";
+import Blogs from "../Pages/Blogs";
+import ViewOrder from "../Pages/ViewOrder";
+import Profile from "../Pages/Profile";
 
 
 
@@ -49,9 +52,13 @@ export const router = createBrowserRouter([
                 element: <Cart />,
             },
             {
+                path: "/blogs",
+                element: <Blogs />,
+            },
+            {
                 path: "/shop/:id",
                 element: <ShopDetails />,
-                loader: ({ params }) => fetch(`http://localhost:5000/api/products/${params.id}`),
+                loader: ({ params }) => fetch(`https://gearupback.vercel.app/api/products/${params.id}`),
 
 
             },
@@ -73,6 +80,14 @@ export const router = createBrowserRouter([
             {
                 path: "/dashboard/products",
                 element: <ManageProducts />,
+            },
+            {
+                path: "/dashboard/orders",
+                element: <ViewOrder />,
+            },
+            {
+                path: "/dashboard/profile",
+                element: <Profile />,
             },
 
 

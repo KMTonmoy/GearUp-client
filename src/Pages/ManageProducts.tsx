@@ -37,7 +37,7 @@ const ManageProducts = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await axios.get('http://localhost:5000/api/products');
+            const response = await axios.get('https://gearupback.vercel.app/api/products');
             setProducts(response.data.data);
         };
         fetchProducts();
@@ -63,7 +63,7 @@ const ManageProducts = () => {
         const imageUrl = await imageUpload(image);
         const newProductData = { ...newProduct, image: imageUrl };
 
-        const response = await axios.post('http://localhost:5000/api/products', newProductData);
+        const response = await axios.post('https://gearupback.vercel.app/api/products', newProductData);
         if (response.data.success) {
             setProducts([...products, response.data.product]);
             setModalOpen(false);
@@ -82,7 +82,7 @@ const ManageProducts = () => {
 
         const updatedProductData = { ...selectedProduct, image: imageUrl };
 
-        const response = await axios.put(`http://localhost:5000/api/products/${selectedProduct._id}`, updatedProductData);
+        const response = await axios.put(`https://gearupback.vercel.app/api/products/${selectedProduct._id}`, updatedProductData);
         if (response.data.success) {
             setProducts(products.map((prod) => (prod._id === selectedProduct._id ? updatedProductData : prod)));
             setUpdateModalOpen(false);
@@ -101,7 +101,7 @@ const ManageProducts = () => {
             confirmButtonText: 'Yes, delete it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const response = await axios.delete(`http://localhost:5000/api/products/${id}`);
+                const response = await axios.delete(`https://gearupback.vercel.app/api/products/${id}`);
                 if (response.data.success) {
                     setProducts(products.filter((prod) => prod._id !== id));
                     Swal.fire('Deleted!', 'Your product has been deleted.', 'success');

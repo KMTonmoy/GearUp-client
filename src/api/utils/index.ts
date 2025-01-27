@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-
-export const imageUpload = async (image) => {
+export const imageUpload = async (image: File): Promise<string> => {
     const formData = new FormData();
     formData.append('image', image);
     const { data } = await axios.post(

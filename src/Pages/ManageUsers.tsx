@@ -15,7 +15,7 @@ const ManageUsers = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/usersgetall');
+                const response = await axios.get('https://gearupback.vercel.app/api/usersgetall');
                 setUsers(response.data.data);
             } catch (error) {
                 toast.error('Failed to fetch users!');
@@ -37,7 +37,7 @@ const ManageUsers = () => {
             const token = parsedAuth.token.replace(/"/g, '');
 
             const response = await axios.patch(
-                `http://localhost:5000/api/admin/users/${userId}/block`,
+                `https://gearupback.vercel.app/api/admin/users/${userId}/block`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -64,7 +64,7 @@ const ManageUsers = () => {
             const token = parsedAuth.token.replace(/"/g, '');
 
             const response = await axios.patch(
-                `http://localhost:5000/api/admin/users/${userId}/unblock`,
+                `https://gearupback.vercel.app/api/admin/users/${userId}/unblock`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
